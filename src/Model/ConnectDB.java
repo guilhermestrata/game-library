@@ -19,8 +19,8 @@ public class ConnectDB {
             Class.forName(driverName);
 
             String serverName = "localhost";
-            String mydatabase = "mysql";
-            String url = "jdbc:mysql://" + serverName + "/" + mydatabase;
+            String mydatabase = "game-library";
+            String url = "jdbc:mysql://" + serverName + "/" + mydatabase + "?useTimezone=true&serverTimezone=UTC";
             String username = "root";
             String password = "123456";
 
