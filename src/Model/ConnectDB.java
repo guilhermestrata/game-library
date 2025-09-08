@@ -5,62 +5,38 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectDB {
-    public static String status = "Não conectou...";
+    private static Connection connection = null;
 
-    public ConnectDB() {
+    private ConnectDB() {}
 
-    }
-
-    public static java.sql.Connection getConnection() {
-        Connection connection = null;
-
-        try {
-            String driverName = "com.mysql.jdbc.Driver";
-            Class.forName(driverName);
-
-            String serverName = "localhost";
-            String mydatabase = "game-library";
-            String url = "jdbc:mysql://" + serverName + "/" + mydatabase + "?useTimezone=true&serverTimezone=UTC";
+    public static Connection getConnection() throws SQLException {
+        if (connection == null || connection.isClosed()) {
+            String url = "jdbc:mysql://localhost/game-library?useTimezone=true&serverTimezone=UTC";
             String username = "root";
             String password = "123456";
 
             connection = DriverManager.getConnection(url, username, password);
-
-            status = connection != null ? "STATUS---> Conexão realizada."
-                                        : "STATUS---> Não foi possivel realizar conexão";
-
-            return connection;
+            System.out.println("Conexão realizada com sucesso!");
         }
-        catch (ClassNotFoundException e) {
-            System.out.println("O driver expecificado nao foi encontrado.");
-
-            return null;
-        }
-        catch (SQLException e) {
-            System.out.println("Nao foi possivel conectar ao Banco de Dados.");
-
-            return null;
-        }
-    }
-
-    public static String statusConnection() {
-        return status;
+        return connection;
     }
 
     public static boolean closeConnection() {
-        try {
-            ConnectDB.getConnection().close();
-
-            return true;
+        if (connection != null) {
+            try {
+                connection.close();
+                connection = null;
+                System.out.println("Conexão fechada com sucesso!");
+                return true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-        catch (SQLException e) {
-
-            return false;
-        }
+        return false;
     }
 
-    public static java.sql.Connection restartConnection() {
+    public static Connection restartConnection() throws SQLException {
         closeConnection();
-        return ConnectDB.getConnection();
+        return getConnection();
     }
 }
